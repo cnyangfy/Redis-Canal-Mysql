@@ -5,12 +5,12 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
+import com.example.redismysql.util.RedisUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 public class Canal{
@@ -71,7 +71,7 @@ public class Canal{
                     redisDelete(rowData.getBeforeColumnsList(),redisTemplate);
                 } else if (eventType == CanalEntry.EventType.INSERT) {
                     System.out.println(1);
-                    redisInsert(rowData.getAfterColumnsList(),redisTemplate);
+                    redisInsert(entry.getHeader().getSchemaName(),rowData.getAfterColumnsList());
                 } else {
                 }
             }
@@ -85,19 +85,19 @@ public class Canal{
             json.put(column.getName(), column.getValue());
         }
         if (columns.size() > 0) {
-            // redisKeyUtil.get()
             redisTemplate.opsForValue().set("user:" + columns.get(0).getValue(), json.toJSONString());
         }
     }
 
-    private void redisInsert(List<CanalEntry.Column> columns,RedisTemplate redisTemplate) {
+    private void redisInsert(String tableName, List<CanalEntry.Column> columns) {
         JSONObject json = new JSONObject();
         for (CanalEntry.Column column : columns) {
             json.put(column.getName(), column.getValue());
         }
         if (columns.size() > 0) {
             try {
-                redisTemplate.opsForValue().set("user:" + columns.get(0).getValue(), json.toJSONString(),60, TimeUnit.SECONDS);
+                RedisUtil.insert(tableName, columns,json);
+//                redisTemplate.opsForValue().set("user:" + columns.get(0).getValue(), json.toJSONString(),60, TimeUnit.SECONDS);
             }catch (Exception e){
                 System.out.println(e);
             }

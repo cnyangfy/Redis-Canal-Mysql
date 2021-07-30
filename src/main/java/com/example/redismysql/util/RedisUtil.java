@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 public class RedisUtil {
     @Autowired
-    private RedisTemplate redisTemplate;
+    private static RedisTemplate redisTemplate;
 
-    public void redisInsert(List<CanalEntry.Column> columns, JSONObject json){
-        redisTemplate.opsForValue().set(columns,json.toJSONString(),120, TimeUnit.SECONDS);
+    public static void insert(String tableName, List<CanalEntry.Column> columns, JSONObject json){
+        redisTemplate.opsForValue().set(tableName+columns,json.toJSONString(),120, TimeUnit.SECONDS);
     }
 
     public void redisDelete(){
