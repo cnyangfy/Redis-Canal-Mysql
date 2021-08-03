@@ -22,7 +22,7 @@ public class AgeController {
 
     @RequestMapping(path = "/canal_create_age", method = RequestMethod.POST)
     public String canalCreateAge(@RequestBody Age age){
-        System.out.println(age.getName());
+//        System.out.println(age.getName());
         ageMapper.insertAge(age.getName(), age.getAge());
         Canal canal = new Canal();
         canal.run(redisTemplate);

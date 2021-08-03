@@ -43,6 +43,7 @@ public class UserController {
             canal.run(redisTemplate);
             return "successful";
         }catch(Exception e){
+            System.out.println(e);
             return "false";
         }
     }
@@ -71,7 +72,31 @@ public class UserController {
         }
     }
 
+    @GetMapping(path = "/canal_delete_user")
+    public String canalDeleteUser(@RequestParam(value = "id") int id){
+        try {
+            userMapper.deleteUser(id);
+            Canal canal = new Canal();
+            canal.run(redisTemplate);
+            return "successful";
+        }catch(Exception e){
+            System.out.println(e);
+            return "false";
+        }
+    }
 
+    @GetMapping(path = "/change_password")
+    public String changePassword(@RequestParam(value = "id") int id,@RequestParam(value = "newp") String newp){
+        try {
+            userMapper.changeP(id, newp);
+            Canal canal = new Canal();
+            canal.run(redisTemplate);
+            return "successful";
+        }catch(Exception e){
+            System.out.println(e);
+            return "false";
+        }
+    }
 
 
 

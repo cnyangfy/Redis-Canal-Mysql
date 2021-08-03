@@ -3,7 +3,7 @@ package com.example.redismysql.pojo;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String id;
+    private int id;
     private String username;
     private String password;
 
@@ -15,7 +15,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

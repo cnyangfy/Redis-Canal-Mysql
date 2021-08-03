@@ -12,6 +12,14 @@
         INSERT INTO user(username,password) VALUES(#{username},#{password})
     </insert>
 
+    <delete id="deleteUser" parameterType="com.example.redismysql.pojo.User">
+        delete from user where id = #{id}
+    </delete>
+
+    <update id="changeP" parameterType="com.example.redismysql.pojo.User">
+        update user set password = #{password} where id = #{id}
+    </update>
+
     <select id="selectByUsername" resultMap="BaseResultMap">
         select * from user where username = #{username}
     </select>

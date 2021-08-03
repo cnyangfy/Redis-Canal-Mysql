@@ -66,27 +66,31 @@ public class Canal{
 
             CanalEntry.EventType eventType = rowChage.getEventType();
             System.out.println(eventType);
+
             for (CanalEntry.RowData rowData : rowChage.getRowDatasList()) {
                 if (eventType == CanalEntry.EventType.DELETE) {
-                    redisDelete(rowData.getBeforeColumnsList(),redisTemplate);
+                    redisDelete(entry.getHeader().getTableName(),rowData.getBeforeColumnsList(),redisTemplate);
                 } else if (eventType == CanalEntry.EventType.INSERT) {
                     System.out.println(1);
                     redisInsert(entry.getHeader().getTableName(),rowData.getAfterColumnsList(),redisTemplate);
-                } else {
+                } else if (eventType == CanalEntry.EventType.UPDATE){
+                    redisUpdate(entry.getHeader().getTableName(),rowData.getAfterColumnsList(),redisTemplate);
                 }
             }
         }
-//        return null;
     }
-
-    private void redisDelete(List<CanalEntry.Column> columns,RedisTemplate redisTemplate) {
+    private void redisDelete(String tableName, List<CanalEntry.Column> columns,RedisTemplate redisTemplate) {
         JSONObject json = new JSONObject();
         for (CanalEntry.Column column : columns) {
             json.put(column.getName(), column.getValue());
         }
+
         if (columns.size() > 0) {
-            // redisKeyUtil.get()
-            redisTemplate.opsForValue().set("user:" + columns.get(0).getValue(), json.toJSONString());
+            try {
+                redisTemplate.delete(tableName + ":" + columns.get(0).getValue());
+            }catch (Exception e){
+                System.out.println("Delete error: "+e);
+            }
         }
     }
 
@@ -95,11 +99,26 @@ public class Canal{
         for (CanalEntry.Column column : columns) {
             json.put(column.getName(), column.getValue());
         }
+            if (columns.size() > 0) {
+                try {
+                    redisTemplate.opsForValue().set(tableName + ":" + columns.get(0).getValue(), json.toJSONString(), 120, TimeUnit.SECONDS);
+                }catch (Exception e){
+                    System.out.println("Insert error: "+e);
+            }
+        }
+    }
+
+    private void redisUpdate(String tableName, List<CanalEntry.Column> columns,RedisTemplate redisTemplate) {
+        JSONObject json = new JSONObject();
+        for (CanalEntry.Column column : columns) {
+            json.put(column.getName(), column.getValue());
+        }
         if (columns.size() > 0) {
             try {
-                redisTemplate.opsForValue().set(tableName + ":" + columns.get(0).getValue(), json.toJSONString(),60, TimeUnit.SECONDS);
+                redisTemplate.delete(tableName + ":" + columns.get(0).getValue());
+                redisTemplate.opsForValue().set(tableName + ":" + columns.get(0).getValue(), json.toJSONString(), 120, TimeUnit.SECONDS);
             }catch (Exception e){
-                System.out.println(e);
+                System.out.println("Update error: "+e);
             }
         }
     }

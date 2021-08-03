@@ -4,10 +4,9 @@ import java.io.Serializable;
 
 public class Age implements Serializable{
 
-        private int id;
+    private int id;
         private String username;
         private int age;
-
         public Age(){
         }
 
