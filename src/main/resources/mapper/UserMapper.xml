@@ -23,6 +23,7 @@
     <select id="selectByUsername" resultMap="BaseResultMap">
         select * from user where username = #{username}
     </select>
+
     <select id="selectByUserId" resultMap="BaseResultMap">
         select * from user where id = #{id}
     </select>
