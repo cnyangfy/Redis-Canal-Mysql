@@ -5,11 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.redismysql.canal.Canal;
 import com.example.redismysql.mapper.UserMapper;
 import com.example.redismysql.pojo.User;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -97,8 +100,22 @@ public class UserController {
             return "false";
         }
     }
-
-
+    @GetMapping(path = "/get_all")
+    public String getAll(){
+        try {
+            int pageSize = 5;
+            int pageNum = 1;
+            PageHelper.startPage(pageNum, pageSize);
+            List<User> list = userMapper.selectAll();
+            PageInfo<User> pageInfo = new PageInfo<User>(list);
+            System.out.println(pageInfo);
+            System.out.println(pageInfo.getPages());
+            return "successful";
+        }catch(Exception e){
+            System.out.println(e);
+            return "false";
+        }
+    }
 
 
 }

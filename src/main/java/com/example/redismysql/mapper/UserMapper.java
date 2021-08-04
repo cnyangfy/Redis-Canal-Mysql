@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface UserMapper {
@@ -13,4 +15,5 @@ public interface UserMapper {
     void changeP(@Param("id") int id, @Param("password") String password);
     User selectByUsername(@Param("username") String username);
     User selectByUserId(@Param("id") int id);
+    List<User> selectAll();
 }

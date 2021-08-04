@@ -27,4 +27,8 @@
     <select id="selectByUserId" resultMap="BaseResultMap">
         select * from user where id = #{id}
     </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from user
+    </select>
 </mapper>
